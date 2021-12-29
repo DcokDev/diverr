@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous">
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl"
+      crossorigin="anonymous"
+    />
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.0/font/bootstrap-icons.css"
+    />
+
+    
+
+    <style>
+      :root {
+        --bs-font-sans-serif: "DM Sans", sans-serif;
+      }
+
+      @media (min-width: 576px) {
+        .card {
+          border: 0;
+          box-shadow: rgb(0 0 0 / 5%) 0px 10px 20px;
+          border-radius: 10px;
+        }
+
+        .card-img-top {
+          width: 100%;
+          height: 20vw;
+          object-fit: cover;
+        }
+      }
+    </style>
+
+    <title>Diverr</title>
+  </head>
+
+  <body>
+    <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 container">
+      <a href="/" class="d-flex align-items-center col-md-3 mb-2 mb-md-0 text-dark text-decoration-none">
+        <h4>Diverr</h4>
+      </a>
+        <div class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+          <span class="nav-link border rounded-pill bg-light">
+            <span id="balance">0</span>
+            cUSD
+          </span>
+        </div>
+      <div class="col-md-4 text-end">
+        <button type="button" class="btn btn-outline-dark me-2">Login</button>
+        <button type="button" data-bs-toggle="modal" data-bs-target="#registerModal" class="btn btn-dark" id="signBtn" style="display: none;">Register</button>
+        <button class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#addModal" id="addSerBtn" style="display: none;">
+          Create Post
+        </button>
+      </div>
+    </header>
+
+    <div class="container mt-2" style="max-width: 72em">
+
+      <div class="alert alert-warning sticky-top mt-2" role="alert">
+        <span id="notification">⌛ Loading...</span>
+      </div>
+
+      <select class="form-select mb-5" aria-label="Default select example" id="filterCategory">
+        <option>All Categories</option>
+        <option value="0">Graphics and Design</option>
+        <option value="1">Digital Marketing</option>
+        <option value="2">Writing and Translation</option>
+        <option value="3">Video and Animation</option>
+        <option value="4">Music and Audio</option>
+        <option value="5">Programming and Tech</option>
+        <option value="6">Business</option>
+        <option value="7">Lifestyle</option>
+        <option value="8">Data</option>
+      </select>
+
+      <main id="marketplace" class="row">
+
+      </main>
+    </div>
+
+<!--Modal-->
+    <div
+      class="modal fade"
+      id="addModal"
+      tabindex="-1"
+      aria-labelledby="newPostModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="newPostModalLabel">Post</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="form-row">
+                <div class="col">
+                  <input
+                    type="text"
+                    id="newPostTitle"
+                    class="form-control mb-2"
+                    placeholder="Post title"
+                  />
+                </div>
+                <div class="col">
+                  <input
+                    type="text"
+                    id="newDescription"
+                    class="form-control mb-2"
+                    placeholder="Enter description"
+                  />
+                </div>
+                <div class="row">
+                  <div class="col-md-8">
+                    <select class="form-select" aria-label="Default select example" aria-placeholder="Hola" id="newCategory">
+                      <option value="0">Graphics and Design</option>
+                      <option value="1">Digital Marketing</option>
+                      <option value="2">Writing and Translation</option>
+                      <option value="3">Video and Animation</option>
+                      <option value="4">Music and Audio</option>
+                      <option value="5">Programming and Tech</option>
+                      <option value="6">Business</option>
+                      <option value="7">Lifestyle</option>
+                      <option value="8">Data</option>
+                    </select>
+                  </div>
+                  <div class="col-md-4">
+                    <input
+                      type="text"
+                      id="newPrice"
+                      class="form-control mb-2"
+                      placeholder="Enter price"
+                    />
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-light border"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+            <button
+              type="button"
+              class="btn btn-dark"
+              data-bs-dismiss="modal"
+              id="newPostBtn"
+            >
+              Post
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+<!--/Modal-->
+
+<!--Modal-->
+<div
+class="modal fade"
+id="registerModal"
+tabindex="-1"
+aria-labelledby="newUserModalLabel"
+aria-hidden="true"
+>
+<div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title" id="newUserModalLabel">Register</h5>
+      <button
+        type="button"
+        class="btn-close"
+        data-bs-dismiss="modal"
+        aria-label="Close"
+      ></button>
+    </div>
+    <div class="modal-body">
+      <form>
+        <div class="form-row">
+          <div class="col">
+            <input
+              type="text"
+              id="newUserName"
+              class="form-control mb-2"
+              placeholder="Name"
+            />
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button
+        type="button"
+        class="btn btn-dark"
+        data-bs-dismiss="modal"
+        id="registerUser"
+      >
+        Register
+      </button>
+    </div>
+  </div>
+</div>
+</div>
+<!--/Modal-->
+
+<!--Modal-->
+<div
+class="modal fade"
+id="hireModal"
+tabindex="-1"
+aria-labelledby="newUserModalLabel"
+aria-hidden="true"
+>
+<div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title" id="newUserModalLabel">Message</h5>
+      <button
+        type="button"
+        class="btn-close"
+        data-bs-dismiss="modal"
+        aria-label="Close"
+      ></button>
+    </div>
+    <div class="modal-body">
+      <form>
+        <div class="form-row">
+          <div class="col">
+            <input
+              type="text"
+              id="newHireMessage"
+              class="form-control mb-2"
+              placeholder="Message"
+            />
+          </div>
+          <div class="col">
+            <input
+              type="text"
+              id="newHireContact"
+              class="form-control mb-2"
+              placeholder="Contact Address"
+            />
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button
+        type="button"
+        class="btn btn-dark"
+        data-bs-dismiss="modal"
+        id="hireServiceBtn"
+      >
+        Hire
+      </button>
+    </div>
+  </div>
+</div>
+</div>
+<!--/Modal-->
+
+<!--Modal-->
+<div
+class="modal fade"
+id="rateService"
+tabindex="-1"
+aria-labelledby="userRating"
+aria-hidden="true"
+>
+<div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title" id="userRating">Rate Service</h5>
+      <button
+        type="button"
+        class="btn-close"
+        data-bs-dismiss="modal"
+        aria-label="Close"
+      ></button>
+    </div>
+    <div class="modal-body">
+      <form>
+        <div class="form-row">
+          <div class="col">
+            
+            <div class="rating">
+              <span class="rating__result"></span> 
+             <i class="rating__star far fa-star"></i>
+             <i class="rating__star far fa-star"></i>
+             <i class="rating__star far fa-star"></i>
+             <i class="rating__star far fa-star"></i>
+             <i class="rating__star far fa-star"></i>
+             <label for="rating">Rating</label>
+          </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button
+        type="button"
+        class="btn btn-dark"
+        data-bs-dismiss="modal"
+        id="rateServiceBtn"
+      >
+        Send Review
+      </button>
+    </div>
+  </div>
+</div>
+</div>
+<!--/Modal-->
+
+<!--Modal-->
+<div
+class="modal fade"
+id="viewModal"
+tabindex="-1"
+aria-labelledby="userRating"
+aria-hidden="true"
+>
+<div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title" id="userRating">Rate Service</h5>
+      <button
+        type="button"
+        class="btn-close"
+        data-bs-dismiss="modal"
+        aria-label="Close"
+      ></button>
+    </div>
+    <div class="modal-body">
+      <div id="reviewsView" style="text-align: center;">
+
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+<!--/Modal-->
+
+<!--Modal-->
+<div
+class="modal fade"
+id="messagesModal"
+tabindex="-1"
+aria-labelledby="MesMod"
+aria-hidden="true"
+>
+<div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title" id="MesMod">Messages</h5>
+      <button
+        type="button"
+        class="btn-close"
+        data-bs-dismiss="modal"
+        aria-label="Close"
+      ></button>
+    </div>
+    <div class="modal-body">
+      <ul class="list-group" id="messagesView">
+
+      </ul>
+    </div>
+
+  </div>
+</div>
+</div>
+<!--/Modal-->
+
+    <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0"
+    crossorigin="anonymous"
+    ></script>
+    <script src="https://unpkg.com/ethereum-blockies@0.1.1/blockies.min.js"></script>
+    <script src="https://use.fontawesome.com/3ccd6f66cc.js"></script>
+  <script type="text/javascript" src="main.js"></script></body>
+</html>
