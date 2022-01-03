@@ -41,12 +41,13 @@ contract Services {
 
     struct Post {
         address payable creator;
+        uint256 category;
+        uint256 price;
         string title;
         string description;
-        uint256 category;
         uint256[] stars;
         address[] buyers;
-        uint256 price;
+        
     }
 
     struct Message {
@@ -64,6 +65,23 @@ contract Services {
 
     mapping(uint256 => Message) internal messages;
 
+    modifier isServiceOwner(uint _id){
+        bool yes = false;
+        for (uint i = 0; i < users[msg.sender].posts.length; i++)
+            if (_id == users[msg.sender].posts[i]){
+                yes = true;
+                break;
+            }
+        
+        if (! yes) {revert();}
+        _;
+    }
+
+    modifier notOwner(uint _id){
+        require(posts[_id].creator != msg.sender, "action restricted");
+        _;
+    }
+
     function postService(
         string memory _title,
         string memory _description,
@@ -75,12 +93,12 @@ contract Services {
         address[] memory _buyers;
         posts[postsLength] = Post(
             payable(msg.sender),
+            _category,
+            _price,
             _title,
             _description,
-            _category,
             _stars,
-            _buyers,
-            _price
+            _buyers
         );
         users[msg.sender].posts.push(postsLength);
         postsLength++;
@@ -91,12 +109,13 @@ contract Services {
         users[msg.sender] = User(msg.sender, _name, _posts);
     }
 
-    function reviewService(uint256 _index, uint256 _stars) public {
-        require(
-            posts[_index].creator != msg.sender,
-            "Cannot review self service."
-        );
+    function reviewService(uint256 _index, uint256 _stars) public notOwner(_index) {
         posts[_index].stars.push(_stars);
+    }
+
+    function changePriceOfService(uint256 post_id, uint new_price) isServiceOwner(post_id) public {
+        // simple function that allows the owner of a service to change the price of the service
+        posts[post_id].price = new_price;
     }
 
     function getPost(uint256 _index)
@@ -143,8 +162,8 @@ contract Services {
         uint256 _index,
         string memory _message,
         string memory _contact
-    ) public payable {
-        require(posts[_index].creator != msg.sender, "Cannot hire yourself");
+    ) public payable notOwner(_index){
+        
         require(
             IERC20Token(cUsdTokenAddress).transferFrom(
                 msg.sender,
