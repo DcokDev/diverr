@@ -3,10 +3,8 @@ import { newKitFromWeb3 } from "@celo/contractkit"
 import BigNumber from "bignumber.js"
 import marketplaceAbi from "../contract/marketplace.abi.json"
 import erc20Abi from "../contract/erc20.abi.json"
+import {MPContractAddress, ERC20_DECIMALS, cUSDContractAddress} from "./utils/constants";
 
-const ERC20_DECIMALS = 18
-const MPContractAddress = "0x95a6841bc13aADF7A87908897a8F2F840bf7845C"
-const cUSDContractAddress = "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
 
 let kit
 let contract
@@ -44,16 +42,16 @@ const connectCeloWallet = async function () {
 async function approve(_price) {
   const cUSDContract = new kit.web3.eth.Contract(erc20Abi, cUSDContractAddress)
 
-  const result = await cUSDContract.methods
+  return await cUSDContract.methods
     .approve(MPContractAddress, _price)
     .send({ from: kit.defaultAccount })
-  return result
+
 }
 
 const getBalance = async function () {
   const totalBalance = await kit.getTotalBalance(kit.defaultAccount)
-  const cUSDBalance = totalBalance.cUSD.shiftedBy(-ERC20_DECIMALS).toFixed(2)
-  document.querySelector("#balance").textContent = cUSDBalance
+  document.querySelector("#balance").textContent = totalBalance.cUSD.shiftedBy(-ERC20_DECIMALS).toFixed(2)
+
 }
 
 const getUser = async function() {
@@ -79,10 +77,10 @@ const getPosts = async function() {
   const _postsLength = await contract.methods.getPostsLength().call()
   const _posts = []
   for (let i = 0; i < _postsLength; i++) {
-    let _post = new Promise(async (resolve, reject) => {
+    let _post = new Promise(async (resolve) => {
       let p = await contract.methods.getPost(i).call()
       let userName = await contract.methods.getUser(p[0]).call()
-      console.log(userName);
+
       resolve({
         index: i,
         author: userName[1],
@@ -137,7 +135,6 @@ function productTemplate(_post) {
 
 function starsRender(_stars = 0) {
   let newEle = ""
-  console.log(_stars);
   for(let i = 0; i < 5; i++){
     if (i < Math.round(_stars)) {
       newEle += `<i class="rating__star fas fa-star"></i>`
@@ -149,25 +146,25 @@ function starsRender(_stars = 0) {
   return newEle
 }
 
-function identiconTemplate(_address) {
-  const icon = blockies
-    .create({
-      seed: _address,
-      size: 8,
-      scale: 16,
-    })
-    .toDataURL()
-
-  return `
-  <div class="rounded-circle overflow-hidden d-inline-block border border-white border-2 shadow-sm m-0">
-    <a href="https://alfajores-blockscout.celo-testnet.org/address/${_address}/transactions"
-        target="_blank">
-        <img src="${icon}" width="48" alt="${_address}">
-    </a>
-  </div>
-  `
-}
-
+// function identiconTemplate(_address) {
+//   const icon = blockies
+//     .create({
+//       seed: _address,
+//       size: 8,
+//       scale: 16,
+//     })
+//     .toDataURL()
+//
+//   return `
+//   <div class="rounded-circle overflow-hidden d-inline-block border border-white border-2 shadow-sm m-0">
+//     <a href="https://alfajores-blockscout.celo-testnet.org/address/${_address}/transactions"
+//         target="_blank">
+//         <img src="${icon}" width="48" alt="${_address}">
+//     </a>
+//   </div>
+//   `
+// }
+//
 
 
 function notification(_text) {
@@ -190,7 +187,7 @@ window.addEventListener("load", async () => {
 
 document
   .querySelector("#newPostBtn")
-  .addEventListener("click", async (e) => {
+  .addEventListener("click", async () => {
     const params = [
       document.getElementById("newPostTitle").value,
       document.getElementById("newDescription").value,
@@ -201,7 +198,7 @@ document
     ]
     notification(`⌛ Adding "${params[0]}"...`)
     try {
-      const result = await contract.methods
+    await contract.methods
         .postService(...params)
         .send({ from: kit.defaultAccount })
     } catch (error) {
@@ -211,11 +208,11 @@ document
     getPosts()
   })
 
-document.getElementById("registerUser").addEventListener("click", async (e) => {
+document.getElementById("registerUser").addEventListener("click", async () => {
   const userName = document.getElementById("newUserName").value
   notification(`⌛ Registering as "${userName}"...`)
     try {
-      const result = await contract.methods
+      await contract.methods
         .registerUser(userName)
         .send({ from: kit.defaultAccount })
     } catch (error) {
@@ -241,7 +238,7 @@ document.querySelector("#marketplace").addEventListener("click", async (e) => {
     document.getElementById("reviewsView").innerHTML = `<h3>${_stars.toFixed(2)} / 5</h3>`
     document.getElementById("reviewsView").innerHTML += starsRender(_stars)
 
-    const list = document.createElement("ul")
+    document.createElement("ul")
 
     for (let i of reviews) {
       const listItem = document.createElement("li")
@@ -257,7 +254,7 @@ document.querySelector("#marketplace").addEventListener("click", async (e) => {
 
     const _messages = []
     for (let i = 0; i < messagesArr.length; i++) {
-      let _message = new Promise(async (resolve, reject) => {
+      let _message = new Promise(async (resolve) => {
         let m = await contract.methods.getMessage(i).call()
         resolve({
           index: i,
@@ -272,7 +269,6 @@ document.querySelector("#marketplace").addEventListener("click", async (e) => {
     messages = await Promise.all(_messages)
 
 
-    console.log(messages);
 
     document.getElementById("messagesView").innerHTML = ""
 
@@ -327,7 +323,7 @@ function printRatingResult(result, num = 0) {
 executeRating(ratingStars, ratingResult);
 
 
-document.getElementById("hireServiceBtn").addEventListener("click", async (e) => {
+document.getElementById("hireServiceBtn").addEventListener("click", async () => {
   const message = document.getElementById("newHireMessage").value
   const contact = document.getElementById("newHireContact").value
   notification("⌛ Waiting for payment approval...")
@@ -338,7 +334,7 @@ document.getElementById("hireServiceBtn").addEventListener("click", async (e) =>
   }
   notification(`⌛ Awaiting payment for "${posts[hireIndex].title}"...`)
   try {
-    const result = await contract.methods
+    await contract.methods
       .hireService(hireIndex, message, contact)
       .send({ from: kit.defaultAccount })
     notification(`🎉 You successfully hired "${posts[hireIndex].author}".`)
@@ -359,10 +355,10 @@ document.querySelector("#filterCategory").addEventListener("change", async (e)=>
   await renderPosts()
 })
 
-document.getElementById("rateServiceBtn").addEventListener("click", async (e) => {
+document.getElementById("rateServiceBtn").addEventListener("click", async () => {
   notification("⌛ Sending review...")
   try {
-    const result = await contract.methods
+    await contract.methods
       .reviewService(rateIndex, stars)
       .send({ from: kit.defaultAccount })
     notification(`🎉 You successfully reviewed "${posts[rateIndex].title}".`)
