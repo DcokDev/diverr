@@ -154,17 +154,17 @@ function starsRender(_stars = 0) {
 //       scale: 16,
 //     })
 //     .toDataURL()
-
-  return `
-  <div class="rounded-circle overflow-hidden d-inline-block border border-white border-2 shadow-sm m-0">
-    <a href="https://alfajores-blockscout.celo-testnet.org/address/${_address}/transactions"
-        target="_blank">
-        <img src="${icon}" width="48" alt="${_address}">
-    </a>
-  </div>
-  `
-}
-
+//
+//   return `
+//   <div class="rounded-circle overflow-hidden d-inline-block border border-white border-2 shadow-sm m-0">
+//     <a href="https://alfajores-blockscout.celo-testnet.org/address/${_address}/transactions"
+//         target="_blank">
+//         <img src="${icon}" width="48" alt="${_address}">
+//     </a>
+//   </div>
+//   `
+// }
+//
 
 
 function notification(_text) {
